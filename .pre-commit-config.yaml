@@ -54,7 +54,6 @@ repos:
     hooks:
       - id: mdformat
         additional_dependencies:
-          - mdformat-gfm
           - mdformat-black
           - mdformat_frontmatter
         exclude: ^resources

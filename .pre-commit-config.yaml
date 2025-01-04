@@ -1,0 +1,87 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+default_language_version:
+  python: python3.9
+
+ci:
+  autofix_prs: true
+  autoupdate_commit_msg: "[pre-commit.ci] pre-commit suggestions"
+  autoupdate_schedule: quarterly
+  # submodules: true
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-case-conflict
+      - id: check-yaml
+        exclude: redis/redis.yml
+      - id: check-toml
+      - id: check-json
+      - id: check-added-large-files
+        args: ["--maxkb=1550", "--enforce-all"]
+        exclude: |
+          (?x)(
+              ^muse/ui/build|
+              muse/ui/yarn.lock
+          )
+      - id: check-docstring-first
+      - id: detect-private-key
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.3.1
+    hooks:
+      - id: pyupgrade
+        args: [--py37-plus]
+        name: Upgrade code
+
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        name: isort (python)
+
+  - repo: https://github.com/psf/black
+    rev: 23.12.1
+    hooks:
+      - id: black
+        language_version: python3.11
+
+  - repo: https://github.com/executablebooks/mdformat
+    rev: 0.7.16
+    hooks:
+      - id: mdformat
+        additional_dependencies:
+          - mdformat-gfm
+          - mdformat-black
+          - mdformat_frontmatter
+        exclude: ^resources
+
+  - repo: https://github.com/asottile/yesqa
+    rev: v1.4.0
+    hooks:
+      - id: yesqa
+
+  - repo: https://github.com/PyCQA/flake8
+    rev: 6.0.0
+    hooks:
+      - id: flake8
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.0.0-alpha.4
+    hooks:
+      - id: prettier
+        exclude: |
+          (?x)(
+              ^.github/ISSUE_TEMPLATE/bug_report.md|
+              ^.github/ISSUE_TEMPLATE/feature_request.md|
+              ^.github/ISSUE_TEMPLATE/documentation.md|
+              ^muse/ui/build|
+              ^README.md
+          )
+        additional_dependencies:
+          - prettier@2.7.1
+          - typescript@4.4.2
+          - prettier-plugin-organize-imports@3.1.0

@@ -1,0 +1,8 @@
+praw
+tavily-python
+python-dotenv
+firecrawl-py
+langgraph
+langchain-openai
+azure-cognitiveservices-speech
+pydub

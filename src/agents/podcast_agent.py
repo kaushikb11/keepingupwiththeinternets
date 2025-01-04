@@ -106,3 +106,7 @@ class PodcastAgent:
         workflow.add_edge("generate_podcast", END)
 
         return workflow.compile()
+
+    def run(self, subreddit: str) -> Dict:
+        final_state = self.workflow.invoke({"subreddit": subreddit})
+        return final_state

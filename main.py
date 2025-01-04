@@ -4,14 +4,9 @@ from src.agents.podcast_agent import PodcastAgent
 
 
 def main():
-    # Load environment variables
     load_dotenv()
-
-    # Create and run agent
     agent = PodcastAgent()
-
-    # Generate podcast for OutOfTheLoop subreddit
-    result = agent.workflow.invoke({"subreddit": "OutOfTheLoop"})
+    result = agent.run("OutOfTheLoop")
 
     print(f"✨ Podcast generated successfully!")
     print(f"📝 Script: {result['final_script'][:500]}...")

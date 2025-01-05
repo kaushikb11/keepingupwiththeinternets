@@ -22,7 +22,7 @@ class PodcastAgent:
         self.script_planner = ScriptPlanner()
         self.dialogue_generator = DialogueGenerator()
         self.script_enhancer = ScriptEnhancer()
-        self.podcast_generator = PodcastGenerator()
+        self.podcast_generator = PodcastGenerator(service="elevenlabs")
         self.workflow = self._create_workflow()
 
     def fetch_posts(self, state: ProcessingState) -> Dict:

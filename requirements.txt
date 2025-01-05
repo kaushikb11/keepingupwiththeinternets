@@ -6,3 +6,4 @@ langgraph
 langchain-openai
 azure-cognitiveservices-speech
 pydub
+elevenlabs

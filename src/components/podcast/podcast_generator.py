@@ -5,29 +5,78 @@ from dataclasses import dataclass
 from typing import List, Optional, Tuple
 
 import azure.cognitiveservices.speech as speechsdk
+from elevenlabs import Voice, VoiceSettings, save
+from elevenlabs.client import ElevenLabs
 from pydub import AudioSegment
 
 
 @dataclass
-class SpeakerConfig:
+class AzureSpeakerConfig:
     voice_name: str
     style: str = "chat"
     style_degree: float = 1.0
 
 
-SPEAKER_CONFIGS = {
-    "Host": SpeakerConfig(voice_name="en-US-JasonNeural", style="chat"),
-    "Learner": SpeakerConfig(voice_name="en-US-JennyNeural", style="friendly"),
-    "Expert": SpeakerConfig(voice_name="en-US-GuyNeural", style="professional"),
+@dataclass
+class ElevenLabsSpeakerConfig:
+    voice_id: str
+    model_id: str = "eleven_monolingual_v1"
+    stability: float = 0.5
+    similarity_boost: float = 0.75
+    style: float = 0.0
+    use_speaker_boost: bool = True
+
+
+AZURE_SPEAKER_CONFIGS = {
+    "Host": AzureSpeakerConfig(voice_name="en-US-JasonNeural", style="chat"),
+    "Learner": AzureSpeakerConfig(voice_name="en-US-JennyNeural", style="friendly"),
+    "Expert": AzureSpeakerConfig(voice_name="en-US-GuyNeural", style="professional"),
+}
+
+ELEVEN_LABS_SPEAKER_CONFIGS = {
+    "Host": ElevenLabsSpeakerConfig(
+        voice_id="cjVigY5qzO86Huf0OWal",
+        stability=0.75,
+        similarity_boost=0.75,
+        style=0.35,
+        use_speaker_boost=True,
+    ),
+    "Learner": ElevenLabsSpeakerConfig(
+        voice_id="cgSgspJ2msm6clMCkdW9",
+        stability=0.65,
+        similarity_boost=0.70,
+        style=0.45,
+        use_speaker_boost=True,
+    ),
+    "Expert": ElevenLabsSpeakerConfig(
+        voice_id="onwK4e9ZLuTAKqWW03F9",
+        stability=0.85,
+        similarity_boost=0.80,
+        style=0.25,
+        use_speaker_boost=True,
+    ),
 }
 
 
 class PodcastGenerator:
-    def __init__(self, base_dir: Optional[str] = "./podcasts"):
+    def __init__(self, service: str = "azure", base_dir: Optional[str] = "./podcasts"):
         self.base_dir = base_dir
+        self.service = service
         os.makedirs(base_dir, exist_ok=True)
 
-    def _generate_audio(self, text: str, speaker: str, output_path: str) -> str:
+        if service == "elevenlabs":
+            eleven_labs_key = os.getenv("ELEVEN_LABS_API_KEY")
+            if not eleven_labs_key:
+                raise ValueError("Missing ELEVEN_LABS_API_KEY environment variable")
+        elif service == "azure":
+            if not all(
+                [os.getenv("AZURE_SPEECH_KEY"), os.getenv("AZURE_SPEECH_REGION")]
+            ):
+                raise ValueError(
+                    "Missing AZURE_SPEECH_KEY or AZURE_SPEECH_REGION environment variables"
+                )
+
+    def _generate_audio_azure(self, text: str, speaker: str, output_path: str) -> str:
         """Generate audio for a single piece of dialogue."""
         wav_path = output_path.replace(".mp3", ".wav")
 
@@ -36,7 +85,7 @@ class PodcastGenerator:
             region=os.getenv("AZURE_SPEECH_REGION"),
         )
 
-        config = SPEAKER_CONFIGS[speaker]
+        config = AZURE_SPEAKER_CONFIGS[speaker]
         speech_config.speech_synthesis_voice_name = config.voice_name
 
         # Create audio config with WAV format
@@ -60,6 +109,38 @@ class PodcastGenerator:
         else:
             print(f"Failed with reason: {result.reason}")
             raise Exception(f"Speech synthesis failed with reason: {result.reason}")
+
+    def _generate_audio_eleven_labs(
+        self, text: str, speaker: str, output_path: str
+    ) -> str:
+        """Generate audio using Eleven Labs."""
+        config = ELEVEN_LABS_SPEAKER_CONFIGS[speaker]
+        client = ElevenLabs(api_key=os.getenv("ELEVEN_LABS_API_KEY"))
+
+        try:
+            voice_settings = VoiceSettings(
+                stability=config.stability,
+                similarity_boost=config.similarity_boost,
+                style=config.style,
+                use_speaker_boost=config.use_speaker_boost,
+            )
+
+            voice = Voice(voice_id=config.voice_id, settings=voice_settings)
+
+            audio = client.generate(text=text, voice=voice, model=config.model_id)
+            save(audio, output_path)
+            return output_path
+        except Exception as e:
+            raise Exception(f"Eleven Labs synthesis failed: {str(e)}")
+
+    def _generate_audio(self, text: str, speaker: str, output_path: str) -> str:
+        """Generate audio for a single piece of dialogue using configured service."""
+        if self.service == "azure":
+            return self._generate_audio_azure(text, speaker, output_path)
+        elif self.service == "elevenlabs":
+            return self._generate_audio_eleven_labs(text, speaker, output_path)
+        else:
+            raise ValueError(f"Unsupported speech service: {self.service}")
 
     def _generate_audio_batch(self, segments: List[Tuple[str, str, int]]) -> List[str]:
         """Generate audio files sequentially."""

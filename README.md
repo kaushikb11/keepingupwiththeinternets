@@ -1,7 +1,17 @@
 <div align="center">
   <img src="assets/image.png" alt="Keeping Up with the Internets" width="600"/>
-  <h3>AI-Powered Internet Culture Podcasts</h3>
-  <p>Transforming Reddit's most intriguing discussions into engaging audio content</p>
+  <p align="center">
+    <strong>AI-Powered Internet Culture Podcasts</strong><br>
+    Transforming Reddit's most intriguing discussions into engaging audio content
+  </p>
+
+<p align="center">
+    <a href="#overview">Overview</a> •
+    <a href="#key-features">Features</a> •
+    <a href="#architecture">Architecture</a> •
+    <a href="#getting-started">Getting Started</a> •
+    <a href="#contributing">Contributing</a>
+  </p>
 </div>
 
 ______________________________________________________________________
@@ -22,7 +32,12 @@ Ever felt overwhelmed trying to keep up with internet culture? We transform r/Ou
 
 The project uses LangGraph for orchestrating the podcast generation workflow:
 
-### Core Components
+<div align="center">
+  <img src="assets/arch.png" alt="Pipeline Overview" width="800"/>
+</div>
+
+<details>
+<summary>Core Components</summary>
 
 #### 1. Content Collection & Processing
 
@@ -55,3 +70,69 @@ The project uses LangGraph for orchestrating the podcast generation workflow:
 - **Audio Synthesis**: Converts enhanced scripts to natural speech
 - **Voice Differentiation**: Distinct voices for Host, Learner, and Expert
 - **Quality Assurance**: Ensures proper pacing and pronunciation
+
+</details>
+
+## 🚀 Getting Started
+
+### Installation
+
+1. Clone the repository
+
+```bash
+git clone https://github.com/kaushikb11/keepingupwiththeinternets.git
+cd keepingupwiththeinternets
+```
+
+2. Create and activate a virtual environment
+
+```bash
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+4. Configure environment variables
+
+```bash
+cp .env.example .env
+# Edit .env with your API credentials:
+# - REDDIT_CLIENT_ID
+# - REDDIT_CLIENT_SECRET
+# - ELEVEN_LABS_API_KEY
+```
+
+### Basic Usage
+
+Generate a podcast from r/OutOfTheLoop's top posts:
+
+```bash
+python3 main.py
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to submit a pull request or open an issue.
+
+1. Fork the repository
+1. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+1. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+1. Push to the branch (`git push origin feature/AmazingFeature`)
+1. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [paper_to_podcast](https://github.com/Azzedde/paper_to_podcast) for components inspiration
+- Reddit's r/OutOfTheLoop community
+- [ElevenLabs](https://elevenlabs.io) for voice synthesis
+- [Firecrawl](https://firecrawl.co) for web content extraction
+- [LangGraph](https://github.com/langchain-ai/langgraph) for workflow orchestration

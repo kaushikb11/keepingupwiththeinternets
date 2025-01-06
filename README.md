@@ -115,6 +115,45 @@ Generate a podcast from r/OutOfTheLoop's top posts:
 python3 main.py
 ```
 
+### Advanced Usage
+
+For automated weekly podcast generation, you can deploy the agent using [Modal](https://modal.com/):
+
+1. Install Modal
+
+```bash
+pip install modal
+```
+
+2. Set up Modal authentication
+
+```bash
+python3 -m modal setup
+```
+
+3. Add secrets to Modal either through the CLI or the web interface
+
+```bash
+python3 -m modal secret create keepingupwiththeinternets-secrets \
+REDDIT_CLIENT_ID=<your-value> \
+REDDIT_CLIENT_SECRET=<your-value> \
+REDDIT_USER_AGENT=<your-value> \ .....
+```
+
+1. Deploy the scheduled job
+
+```bash
+python3 -m modal deploy modal_app.py
+```
+
+The deployment will:
+
+- Run automatically every week
+- Store podcasts in Modal's persistent storage
+- Handle all dependencies and environment setup
+
+You can monitor your deployments in the [Modal dashboard](https://modal.com/apps).
+
 ## 🤝 Contributing
 
 Contributions are welcome! Feel free to submit a pull request or open an issue.
@@ -134,5 +173,5 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 - [paper_to_podcast](https://github.com/Azzedde/paper_to_podcast) for components inspiration
 - Reddit's r/OutOfTheLoop community
 - [ElevenLabs](https://elevenlabs.io) for voice synthesis
-- [Firecrawl](https://firecrawl.co) for web content extraction
+- [Firecrawl](https://www.firecrawl.dev/) for web content extraction
 - [LangGraph](https://github.com/langchain-ai/langgraph) for workflow orchestration

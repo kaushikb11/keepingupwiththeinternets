@@ -16,13 +16,15 @@ from src.models.types import ProcessingState
 class PodcastAgent:
     """Agent for orchestrating the podcast generation process"""
 
-    def __init__(self):
+    def __init__(self, tts_service: str = "elevenlabs", base_dir: str = "./podcasts"):
         self.post_fetcher = RedditPostFetcher()
         self.post_processor = RedditPostProcessor()
         self.script_planner = ScriptPlanner()
         self.dialogue_generator = DialogueGenerator()
         self.script_enhancer = ScriptEnhancer()
-        self.podcast_generator = PodcastGenerator(service="elevenlabs")
+        self.podcast_generator = PodcastGenerator(
+            service=tts_service, base_dir=base_dir
+        )
         self.workflow = self._create_workflow()
 
     def fetch_posts(self, state: ProcessingState) -> Dict:

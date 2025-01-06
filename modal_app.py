@@ -42,7 +42,7 @@ def generate_podcast():
 
     print(f"Starting podcast generation at {datetime.now()}")
 
-    agent = PodcastAgent(tts_service="azure", base_dir="/podcasts")
+    agent = PodcastAgent(tts_service="elevenlabs", base_dir="/podcasts")
 
     result = agent.run("OutOfTheLoop")
 

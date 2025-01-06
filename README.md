@@ -140,7 +140,7 @@ REDDIT_CLIENT_SECRET=<your-value> \
 REDDIT_USER_AGENT=<your-value> \ .....
 ```
 
-1. Deploy the scheduled job
+4. Deploy the scheduled job
 
 ```bash
 python3 -m modal deploy modal_app.py
